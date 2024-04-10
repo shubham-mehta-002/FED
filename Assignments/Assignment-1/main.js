@@ -1,0 +1,188 @@
+const products = [
+    {
+        id:1,
+        name: "iPhone 15 Pro Max",
+        price: 148999,
+        image: "./images/img1.jpeg",
+        quantity:1
+    },
+    {
+        id:2,
+        name: "iPhone 14 Pro ",
+        price: 119900,
+        image: "./images/img2.jpeg",
+        quantity:1
+    },
+    {
+        id:3,
+        name: "Samsung S23 Ultra",
+        price: 109900,
+        image: "./images/img3.jpeg",
+        quantity:1
+    },
+    {
+        id:4,
+        name: "Google Pixel 8 Pro",
+        price: 106900,
+        image: "./images/img4.jpeg",
+        quantity:1
+    },
+    
+    
+]
+
+// document.body.style.alignContent= "center"
+
+
+// Heading
+const heading= document.createElement("h1")
+heading.appendChild(document.createTextNode("SHOPPING CART"))
+heading.style.textAlign="center"
+heading.style.fontSize="50px"
+document.body.appendChild(heading)
+
+// product
+const productHeader = document.createElement("h1")
+productHeader.appendChild(document.createTextNode("PRODUCT LIST"))
+productHeader.style.textAlign="center"
+const container = document.createElement("div")
+container.id="container-product"
+document.body.appendChild(productHeader)
+document.body.appendChild(container)
+
+
+// cart
+const cartHeader = document.createElement("h1")
+cartHeader.appendChild(document.createTextNode("CART"))
+cartHeader.style.textAlign="center"
+const cart = document.createElement("div")
+cart.id="container-cart"
+document.body.appendChild(cartHeader)
+document.body.appendChild(cart)
+
+// price functionality
+const priceHeader=document.createElement("h2")
+priceHeader.appendChild(document.createTextNode("Total Price : "))
+const price= document.createElement("span")
+price.id="price"
+price.innerHTML=0
+priceHeader.appendChild(price)
+document.body.appendChild(priceHeader)
+
+
+//checkout functionality
+const checkout= document.createElement('button')
+checkout.className="checkout";
+checkout.textContent="CHECKOUT"
+checkout.addEventListener('click',()=>alert("Currently Unavailable"))
+document.body.appendChild(checkout)
+
+let cartItems=[];
+
+
+function addProductToDOM(item, parentElement) {
+    let productDiv = document.createElement('div');
+    productDiv.className = "products";
+    let heading = document.createElement('h3');
+    let productName = document.createTextNode(item.name);
+    let productPrice = document.createTextNode(` (Rs. ${item.price})`);
+    let image = document.createElement("img");
+    image.setAttribute("src", item.image);
+    image.setAttribute("height", "200px");
+    image.setAttribute("width", "250px");
+    let button = document.createElement("button");
+    button.innerText = "Add to Cart";
+    button.addEventListener('click', () => clickHandler(item));
+    
+    productDiv.appendChild(image);
+    productDiv.appendChild(heading);
+    productDiv.appendChild(button);
+    heading.appendChild(productName);
+    heading.appendChild(productPrice);
+    
+    parentElement.appendChild(productDiv);
+    
+}
+
+
+function addProductToCart(item, parentElement) {
+   
+    const isItemInCart = cartItems.find(cartItem => cartItem.id === item.id);
+      
+    if(isItemInCart)
+        alert("already in cart")
+    else{
+        
+        cartItems = [...cartItems , item]
+        let productDiv = document.createElement('div');
+        productDiv.className = "products";
+        productDiv.id=`product-${item.id}`
+        let heading = document.createElement('h3');
+        let productName = document.createTextNode(item.name);
+        let productPrice = document.createTextNode(` (Rs. ${item.price})`);
+
+        let image = document.createElement("img");
+        image.setAttribute("src", item.image);
+        image.setAttribute("height", "200px");
+        image.setAttribute("width", "250px");
+
+        const buttonsDiv=  document.createElement('div');
+        let plusButton = document.createElement("button");
+        let minusButton = document.createElement("button");
+        let counterValue = document.createElement("span")
+        counterValue.innerHTML=`${item.quantity}`
+        plusButton.innerText = "+";
+        minusButton.innerText = "-";
+        
+        plusButton.addEventListener('click', () => add(counterValue,item));
+        minusButton.addEventListener('click',() => sub(counterValue,item));
+        buttonsDiv.appendChild(plusButton)
+
+        buttonsDiv.appendChild(counterValue)
+        buttonsDiv.appendChild(minusButton)
+        
+        productDiv.appendChild(image);
+        productDiv.appendChild(heading);
+        productDiv.appendChild(buttonsDiv);
+        heading.appendChild(productName);
+        heading.appendChild(productPrice);
+        
+        parentElement.appendChild(productDiv);
+        calcprice();
+        }
+    }
+
+function add(counterValue,item)
+{
+    ++item.quantity;
+    counterValue.innerHTML = `${item.quantity}`
+    calcprice();
+}
+function sub(counterValue,item)
+{
+    if(item.quantity-1 === 0)
+    {
+        const itemToBeRemoved = document.querySelector(`#product-${item.id}`)
+        cart.removeChild(itemToBeRemoved)
+        cartItems = cartItems.filter((elem)=>elem.id !== item.id)
+    }
+    else
+        counterValue.innerHTML = `${--item.quantity}`
+    calcprice();
+}
+   
+function calcprice()
+{
+    const total = cartItems.reduce(((acc,curr)=> acc+=(curr.quantity*curr.price)),0)
+    price.innerHTML = total
+}
+
+function clickHandler(item) {
+        addProductToCart(item, cart);
+    }  
+
+   
+products.forEach((item) => {
+    addProductToDOM(item, container);
+});
+
