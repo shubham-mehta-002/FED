@@ -1,1 +1,0 @@
-export {default as spotifyLogo} from './spotifyLogo.png'
